@@ -1,8 +1,6 @@
 #encoding: windows-31j
 
-require "fileutils"
-require "date"
-require_relative 'component/account_info'
+require_relative 'component/components'
 
 desktop = account_info[:desktop_dir].gsub("\\","/")
 today = Date.today.to_s

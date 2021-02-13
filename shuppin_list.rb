@@ -1,7 +1,5 @@
 #encoding: windows-31j
-require "selenium-webdriver"
-require 'csv'
-require_relative 'component/account_info'
+require_relative 'component/components'
 
 #############
 targets = [account_info[:account]]

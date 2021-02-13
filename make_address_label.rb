@@ -1,7 +1,5 @@
 #encoding:windows-31j
-require 'csv'
-require 'date'
-require_relative 'component/account_info'
+require_relative 'component/components'
 
 account = account_info[:account]
 postal_code = account_info[:postal_code]

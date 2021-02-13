@@ -1,11 +1,5 @@
 #encoding: windows-31j
-require "selenium-webdriver"
-require 'date'
-require_relative 'component/account_info'
-require_relative 'component/read_send_file'
-require_relative 'component/read_message_files'
-require_relative 'component/login_yahoo'
-require_relative 'component/check_if_only_one_send_file_exist'
+require_relative 'component/components'
 check_if_only_one_send_file_exist
 template = read_message_files
 account = account_info[:account]

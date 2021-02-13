@@ -1,7 +1,5 @@
 #encoding: windows-31j
-require 'date'
-require 'csv'
-require_relative "component/account_info"
+require_relative "component/components"
 account = account_info[:account]
 
 puts "#{account} に関するデータの削除をします。"

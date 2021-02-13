@@ -1,13 +1,5 @@
 #encoding: windows-31j
-require "selenium-webdriver"
-require 'date'
-require 'time'
-require 'csv'
-require_relative 'component/to_date'
-require_relative 'component/account_info'
-require_relative 'component/product_ids'
-require_relative 'component/login_yahoo'
-require_relative 'component/init'
+require_relative 'component/components'
 
 init ##フォルダがない場合そのアカウント用のフォルダを作成
 account = account_info[:account]
