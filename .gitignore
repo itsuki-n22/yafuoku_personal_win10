@@ -1,0 +1,7 @@
+*.swp
+*~
+/sale/*
+/data/*
+/sent/*
+/tmp/*
+/debug/*

@@ -1,0 +1,4 @@
+desktop_dir: C:\Users\デスクトップ
+sagawa_track_url: https://k2k.sagawa-exp.co.jp/p/sagawa/web/okurijoinput.jsp
+postjp_track_url: http://www.post.japanpost.jp/
+yamato_track_url: https://toi.kuronekoyamato.co.jp/cgi-bin/tneko
