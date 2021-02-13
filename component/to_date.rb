@@ -42,3 +42,17 @@ def to_date4(str,year1)
 	Time.new(year1,day[1],day[2],day[3],day[4])
 
 end
+
+def to_date-tmp(str: "", year: nil)
+  str = str.encode("cp932")
+  return nil if str == nil
+  match = str.scan(/\d+/) 
+
+  year ||= Time.new.year
+  day = [year]
+  return false unless match.size == 4
+  day += match
+  day.map!(&:to_i)
+  Time.new(year1,day[1],day[2],day[3],day[4])
+
+end
