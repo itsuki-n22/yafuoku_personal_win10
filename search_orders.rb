@@ -144,7 +144,7 @@ untreat_urls.each do |url|
   driver.find_elements(:xpath, x_product).each{|f| product = f.text.encode('cp932', undef: :replace)}
   driver.find_elements(:xpath, x_close).each do |f|
      tmp = f.text.encode('cp932', undef: :replace).split('： ')[1]
-     close = to_date2(tmp)
+     close = time_parse(str: tmp).to_s
   end
   aucid = driver.find_element(:xpath, x_aucid).text.encode('cp932', undef: :replace).split('ID： ')[1]
 
@@ -186,12 +186,12 @@ untreat_urls.each do |url|
     if /発送の連絡/ =~ f.text.encode('cp932', undef: :replace)
       status = 3
       tmp = f.find_element(:css,'span').text.encode('cp932', undef: :replace)
-      sentday = to_date2(tmp)
+      sentday = time_parse(str: tmp).to_s
     end
     if /支払い完了/ =~ f.text.encode('cp932', undef: :replace)
       status = 2
       tmp = f.find_element(:css,'span').text.encode('cp932', undef: :replace)
-      payday = to_date2(tmp)
+      payday = time_parse(str: tmp).to_s
     end
     if /お届け情報/ =~ f.text.encode('cp932', undef: :replace)
       status = 1
@@ -256,8 +256,8 @@ end
     print index.to_s + " "
     next if index == 0  
     
-    new_date = to_date3(cdate.text.encode('cp932'))
-    new_date = to_date4(cdate.text.encode('cp932'), Time.new.year - 1) if new_date.month == 12 && old_date.month == 12 && new_date.year != old_date.year ###january
+    new_date = time_parse(str: cdate.text.encode('cp932'))
+    new_date = time_parse(str: cdate.text.encode('cp932'), year: Time.new.year - 1) if new_date.month == 12 && old_date.month == 12 && new_date.year != old_date.year ###january
 
     if new_date > old_date
       target_num = index
@@ -326,7 +326,7 @@ end
     end
     driver.find_elements(:xpath, x_close).each do |f|
        tmp = f.text.encode('cp932', undef: :replace).split('： ')[1]
-       close = to_date2(tmp)
+       close = time_parse(str: tmp).to_s
     end
     aucid = driver.find_element(:xpath, x_aucid).text.encode('cp932', undef: :replace).split('ID： ')[1]
 
@@ -353,7 +353,7 @@ end
     end
     driver.find_elements(:xpath, x_close).each do |f|
        tmp = f.text.encode('cp932', undef: :replace).split('： ')[1]
-       close = to_date2(tmp)
+       close = time_parse(str: tmp).to_s
     end
     aucid = driver.find_element(:xpath, x_aucid).text.encode('cp932', undef: :replace).split('ID： ')[1]
     new_order << [aucid,"bbs"] #### 新しい注文
@@ -401,12 +401,12 @@ end
       if /発送の連絡/ =~ f.text.encode('cp932', undef: :replace)
         status = 3
         tmp = f.find_element(:css,'span').text.encode('cp932', undef: :replace)
-        sentday = to_date2(tmp)
+        sentday = time_parse(str: tmp).to_s
       end
       if /支払い完了/ =~ f.text.encode('cp932', undef: :replace)
         status = 2
         tmp = f.find_element(:css,'span').text.encode('cp932', undef: :replace)
-        payday = to_date2(tmp)
+        payday = time_parse(str: tmp).to_s
       end
       if /お届け情報/ =~ f.text.encode('cp932', undef: :replace)
         status = 1
