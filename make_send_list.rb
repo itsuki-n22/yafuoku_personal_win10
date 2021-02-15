@@ -13,30 +13,30 @@ CSV.foreach("./data/prepare_#{account}.csv"){|x| send_data << x }
 result = [ %w(p_id ’•¶ID w“üŽÒ–¼ ”„ê Žx•¥‹àŠz ‹àŠz ASIN FBA? ”­‘—î•ñ url) ]
 
 send_data.each_with_index do |d,index|
-		next if d == nil
-		place = account 
-		p_id = d[1]
-    asin = ""
-		memo = ""
-		qunt = d[7].to_i
-		p_id = p_id + "xx" + qunt.to_s if qunt > 1
-		id = d[4]
-		url = d[2]
-		name = d[13]
-		price1 = d[9]
-		price2 = d[12]
-		payment = d[11]
-    input = ""
-    input = payment if payment =~ /‘ã‹àˆøŠ·/
+  next if d == nil
+  place = account 
+  p_id = d[1]
+  asin = ""
+  memo = ""
+  qunt = d[7].to_i
+  p_id = p_id + "xx" + qunt.to_s if qunt > 1
+  id = d[4]
+  url = d[2]
+  name = d[13]
+  price1 = d[9]
+  price2 = d[12]
+  payment = d[11]
+  input = ""
+  input = payment if payment =~ /‘ã‹àˆøŠ·/
 
-		comment = d[18]
-    comment_data.each do |tmp|
-      if tmp[0] == id
-        comment = tmp[1]
-        break
-      end
+  comment = d[18]
+  comment_data.each do |tmp|
+    if tmp[0] == id
+      comment = tmp[1]
+      break
     end
-		result << [p_id,id,name,place,price2,price1,asin,memo,input,url,payment,comment]
+  end
+  result << [p_id,id,name,place,price2,price1,asin,memo,input,url,payment,comment]
 end
 
 CSV.open(desktop + 'send_yafuoku_' + Date.today.to_s + '.csv',"w"){|f| result.each{|d| f << d}}

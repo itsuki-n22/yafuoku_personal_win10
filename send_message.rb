@@ -30,17 +30,17 @@ end_flag = false
   driver = Selenium::WebDriver.for :chrome if access
   login_yahoo(account: account,password: password, driver: driver) if access
 
-	list.each do |l|
-		place = l[3]
+  list.each do |l|
+    place = l[3]
     deliver = l[7]
     track_info = l[8]
-		next unless place == account
-		next if l[7] == "x" || l[7] == "q" || l[7] == "ｘ"
-		next if l[8] == "x" || l[8] == "q" || l[8] == "ｘ"
-		next if l[9] == "x" || l[9] == "q" || l[9] == "ｘ"
-		next if l[10] == "x" || l[10] == "q" || l[10] == "ｘ"
+    next unless place == account
+    next if l[7] == "x" || l[7] == "q" || l[7] == "ｘ"
+    next if l[8] == "x" || l[8] == "q" || l[8] == "ｘ"
+    next if l[9] == "x" || l[9] == "q" || l[9] == "ｘ"
+    next if l[10] == "x" || l[10] == "q" || l[10] == "ｘ"
 
-		puts "オークションID:" + l[1]
+    puts "オークションID:" + l[1]
     if deliver.nil? && track_info.nil?
       p "  発送情報がないので飛ばしました。"
       next
@@ -49,21 +49,21 @@ end_flag = false
       next
     end
 
-		driver.navigate.to l[9] if access
-		explain = ""
-		if deliver =~ /fba/i
+    driver.navigate.to l[9] if access
+    explain = ""
+    if deliver =~ /fba/i
       explain = template[:amazon_fba].gsub("@arrive_data@", track_info)
-		elsif deliver =~ /s/i
+    elsif deliver =~ /s/i
       explain = template[:basic].gsub("@track_url@", account_info[:sagawa_track_url]).gsub("@sender@", "佐川急便")
-		elsif deliver =~ /y/i
+    elsif deliver =~ /y/i
       explain = template[:basic].gsub("@track_url@", account_info[:yamato_track_url]).gsub("@sender@", "ヤマト運輸")
-		elsif /\d+/ =~ track_info
+    elsif /\d+/ =~ track_info
       explain = template[:basic].gsub("@track_url@", account_info[:postjp_track_url]).gsub("@sender@", "日本郵便")
-		elsif /[te|て|定]/ =~ track_info
+    elsif /[te|て|定]/ =~ track_info
       explain = template[:teikeigai]
-		end
+    end
     explain = explain.gsub("@email@", account + "@yahoo.co.jp").gsub("@track_number@", track_info)
-		
+    
     begin
       driver.find_element(:xpath => send_btn).click
       sleep 1
@@ -83,7 +83,7 @@ end_flag = false
 
     driver.find_element(:xpath => sub_btn).click rescue retry
     sleep 1
-	end
-	driver.quit
+  end
+  driver.quit
 end
 p "send_message complete"

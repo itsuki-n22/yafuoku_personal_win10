@@ -14,7 +14,7 @@ def login_yahoo(account: nil, password: nil, driver: nil)
     element.send_keys password
     element.submit
   else
-    p "暗証番号かパスワードを入れてね。その後コマンドプロンプトでenterを一回押してね"
+    puts "暗証番号かパスワードを入れてね。その後コマンドプロンプトでenterを一回押してね"
     STDIN.gets.chomp
     element.submit rescue nil
   end

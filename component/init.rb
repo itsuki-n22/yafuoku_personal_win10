@@ -1,5 +1,5 @@
 #encoding: windows-31j
-#
+
 require "fileutils"
 require_relative "account_info"
 

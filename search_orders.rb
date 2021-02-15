@@ -13,8 +13,8 @@ target_file = Dir.pwd + '\\sale\\' + account + '_sale.csv'
 old_date = Time.now - 31536000
 CSV.foreach(target_file) do |line|
   break if line[3] == nil
-	old_date = Time.parse(line[3])
-	break
+  old_date = Time.parse(line[3])
+  break
 end
 read_data = CSV.open(target_file).read
 puts "最新データの落札日:" + old_date.to_s
@@ -38,7 +38,7 @@ login_yahoo(account: account, password: password, driver: driver)
 
 def take_product(driver, car_pids, auc_id)
   url = 'https://page.auctions.yahoo.co.jp/jp/auction/' + auc_id
-	driver.navigate.to url
+  driver.navigate.to url
   id = nil
   driver.find_element(:xpath, '//*[@class="ProductExplanation__commentBody"]').text.encode("cp932").split("\c\n").each do |d|
     d = d.strip
@@ -75,37 +75,37 @@ p untreat_urls.size.to_s + "個チェックします"
 untreat = ""
 
 untreat_urls.each do |url|
-	driver.navigate.to url.split('&').first
-	puts url
-	
-	status = 0
-	product=""
-	close=""
-	price=""
-	aucid=""
-	userid=""
-	qunt=""
-	send_price="0"
-	amount=""
-	name=""
-	postnum=""
-	address=""
-	tel=""
-	payday = ""
-	sentday=""
-	payway =""
-	############################################複数落札者がいる場合
-	x_multi = '//*[@id="acWrContents"]/div/div/h1'
-	x_extraurl = '//*[@id="acWrContents"]/div/table/tbody/tr/td/table/tbody/tr/td/div[2]/table/tbody/tr/td[5]/div[1]/a'
+  driver.navigate.to url.split('&').first
+  puts url
+  
+  status = 0
+  product=""
+  close=""
+  price=""
+  aucid=""
+  userid=""
+  qunt=""
+  send_price="0"
+  amount=""
+  name=""
+  postnum=""
+  address=""
+  tel=""
+  payday = ""
+  sentday=""
+  payway =""
+  ############################################複数落札者がいる場合
+  x_multi = '//*[@id="acWrContents"]/div/div/h1'
+  x_extraurl = '//*[@id="acWrContents"]/div/table/tbody/tr/td/table/tbody/tr/td/div[2]/table/tbody/tr/td[5]/div[1]/a'
 
-	begin
+  begin
     if driver.find_element(:xpath,x_multi)
       puts "複数落札者"
-      driver.find_elements(:xpath => x_extraurl).each{|x|	urls << x.attribute('href')}
+      driver.find_elements(:xpath => x_extraurl).each{|x|  urls << x.attribute('href')}
       next
     end
   rescue
-	end
+  end
 
   driver.find_elements(:xpath,'//*[@id="yjMain"]/div/div/p').each do |element|
     if element.text.encode('cp932') =~ /削除済み/
@@ -115,40 +115,40 @@ untreat_urls.each do |url|
     end
   end
 
-	begin 
-		if driver.find_element(:xpath,'//*[@id="plibLoadMdlInner"]/div/div[2]/input') 
-			puts "音信不通 or 連絡待ち"
+  begin 
+    if driver.find_element(:xpath,'//*[@id="plibLoadMdlInner"]/div/div[2]/input') 
+      puts "音信不通 or 連絡待ち"
       untreat += url + "\n" 
-			next
-		end
-	rescue
-	end
+      next
+    end
+  rescue
+  end
 
-	begin
-		if driver.find_element(:xpath, '//*[@id="plibLoadMdlInner"]/div/div[2]/div[2]/a')
-			puts "まとめて発送"
+  begin
+    if driver.find_element(:xpath, '//*[@id="plibLoadMdlInner"]/div/div[2]/div[2]/a')
+      puts "まとめて発送"
       untreat += url + "\n" 
-			next
-		end
-	rescue
-	end
-	############################################上部
+      next
+    end
+  rescue
+  end
+  ############################################上部
 
-	# "詳細データ表示ボタンをクリック	"
+  # "詳細データ表示ボタンをクリック  "
   driver.find_element(:xpath => x_click).click rescue retry
   
-	userid = driver.find_element(:xpath,'//dd[@class="decBuyerID"]').text.encode('cp932', undef: :replace).split(/\s/).last.split('（').first
-	tmp = driver.find_element(:xpath,'//dd[@class="decPrice"]').text.encode('cp932', undef: :replace).scan(/([\d\,]+)/).flatten
-	qunt = tmp[0]
-	price = tmp[1].gsub(',','')
-	driver.find_elements(:xpath, x_product).each{|f| product = f.text.encode('cp932', undef: :replace)}
-	driver.find_elements(:xpath, x_close).each do |f|
-		 tmp = f.text.encode('cp932', undef: :replace).split('： ')[1]
-		 close = to_date2(tmp)
-	end
-	aucid = driver.find_element(:xpath, x_aucid).text.encode('cp932', undef: :replace).split('ID： ')[1]
+  userid = driver.find_element(:xpath,'//dd[@class="decBuyerID"]').text.encode('cp932', undef: :replace).split(/\s/).last.split('（').first
+  tmp = driver.find_element(:xpath,'//dd[@class="decPrice"]').text.encode('cp932', undef: :replace).scan(/([\d\,]+)/).flatten
+  qunt = tmp[0]
+  price = tmp[1].gsub(',','')
+  driver.find_elements(:xpath, x_product).each{|f| product = f.text.encode('cp932', undef: :replace)}
+  driver.find_elements(:xpath, x_close).each do |f|
+     tmp = f.text.encode('cp932', undef: :replace).split('： ')[1]
+     close = to_date2(tmp)
+  end
+  aucid = driver.find_element(:xpath, x_aucid).text.encode('cp932', undef: :replace).split('ID： ')[1]
 
-	###########################################下部
+  ###########################################下部
   begin  ##まとめて取引の付属商品である場合
     driver.find_element(:xpath,'//*[@id="yjMain"]/div/a[@class="libBtnGrayL"]').click
     sleep 1
@@ -158,45 +158,45 @@ untreat_urls.each do |url|
 
   send_price = driver.find_element(:xpath => x_send_price).text.encode('cp932', undef: :replace).scan(/([\d\,]+)/).flatten.last.gsub(',','') rescue nil
 
-	begin
-		driver.find_elements(:xpath => x_payway).each do |f|
-		  payway = f.text.encode('cp932', undef: :replace)
-		  break
-		end
-	rescue
-	end
+  begin
+    driver.find_elements(:xpath => x_payway).each do |f|
+      payway = f.text.encode('cp932', undef: :replace)
+      break
+    end
+  rescue
+  end
 
-	begin
-		driver.find_element(:xpath => x_name).text  ##まとめパート
-	rescue
+  begin
+    driver.find_element(:xpath => x_name).text  ##まとめパート
+  rescue
     puts "matome:音信不通 or 連絡待ち"
     untreat += url + "\n" 
     next
-	end
+  end
   name = driver.find_element(:xpath => x_name).text.encode('cp932', undef: :replace)
-	tmp = driver.find_element(:xpath => x_postnum).text.encode('cp932', undef: :replace).split(/[\n]/)
-	postnum = tmp[0]
-	address = tmp[1]
-	tel = driver.find_element(:xpath => x_tel).text.encode('cp932', undef: :replace)
+  tmp = driver.find_element(:xpath => x_postnum).text.encode('cp932', undef: :replace).split(/[\n]/)
+  postnum = tmp[0]
+  address = tmp[1]
+  tel = driver.find_element(:xpath => x_tel).text.encode('cp932', undef: :replace)
   
-	driver.find_elements(:xpath,x_status ).reverse.each_with_index do |f,index|
-		if /受け取り/ =~ f.text.encode('cp932', undef: :replace)
-			status = 4
-		end
-		if /発送の連絡/ =~ f.text.encode('cp932', undef: :replace)
-			status = 3
-			tmp = f.find_element(:css,'span').text.encode('cp932', undef: :replace)
-			sentday = to_date2(tmp)
-		end
-		if /支払い完了/ =~ f.text.encode('cp932', undef: :replace)
-			status = 2
-			tmp = f.find_element(:css,'span').text.encode('cp932', undef: :replace)
-			payday = to_date2(tmp)
-		end
-		if /お届け情報/ =~ f.text.encode('cp932', undef: :replace)
-			status = 1
-		end
-	end
+  driver.find_elements(:xpath,x_status ).reverse.each_with_index do |f,index|
+    if /受け取り/ =~ f.text.encode('cp932', undef: :replace)
+      status = 4
+    end
+    if /発送の連絡/ =~ f.text.encode('cp932', undef: :replace)
+      status = 3
+      tmp = f.find_element(:css,'span').text.encode('cp932', undef: :replace)
+      sentday = to_date2(tmp)
+    end
+    if /支払い完了/ =~ f.text.encode('cp932', undef: :replace)
+      status = 2
+      tmp = f.find_element(:css,'span').text.encode('cp932', undef: :replace)
+      payday = to_date2(tmp)
+    end
+    if /お届け情報/ =~ f.text.encode('cp932', undef: :replace)
+      status = 1
+    end
+  end
 
   if status == 2
     tmp = []
@@ -204,8 +204,8 @@ untreat_urls.each do |url|
     comment_data << [aucid,tmp]
   end
 
-	amount = send_price.to_i + price.to_i * qunt.to_i
-	#########################決済チェック#
+  amount = send_price.to_i + price.to_i * qunt.to_i
+  #########################決済チェック#
   moji = /受取明細/
   paied = nil
   see_detail = nil
@@ -218,7 +218,7 @@ untreat_urls.each do |url|
 
   end
   if see_detail
-	  begin
+    begin
       driver.navigate.to see_detail
       sleep 2
       paied = driver.find_element(:xpath ,'//dl[@class="itemize"]/dd[@class="u-fontSize14"]').text.scan(/([\d\,]+)/).flatten.last
@@ -232,16 +232,16 @@ untreat_urls.each do |url|
     x_cancel = '//*[@id="rcvdtl"]/ul/li[2]/dl'
     paied = "キャンセル" if driver.find_element(:xpath ,x_cancel).text.encode('cp932') =~ /キャンセル/
   end
-	###########################################
+  ###########################################
   puts product = take_product(driver, car_pids, aucid) if take_product(driver, car_pids, aucid)
  
-	prepare << [status,product,url,close,aucid,userid,price,qunt,send_price,amount,payday,payway,paied,name,postnum,address,tel] if status == 2
+  prepare << [status,product,url,close,aucid,userid,price,qunt,send_price,amount,payday,payway,paied,name,postnum,address,tel] if status == 2
 
-	if status == 1 || status == 0 || status == 2
+  if status == 1 || status == 0 || status == 2
     untreat += url + "\n" 
-	else
+  else
     change << [status,product,url,close,aucid,userid,price,qunt,send_price,amount,payday,payway,sentday,name,postnum,address,tel] 
-	end
+  end
 end
 #####################
 (1..10).each do |page| ##便宜的に1-10にしてるけど、適宜変更してね。debug
@@ -254,7 +254,7 @@ end
   target_num = 0
   driver.find_elements(:xpath => x_closes).each_with_index do |cdate,index| #
     print index.to_s + " "
-    next if index == 0	
+    next if index == 0  
     
     new_date = to_date3(cdate.text.encode('cp932'))
     new_date = to_date4(cdate.text.encode('cp932'), Time.new.year - 1) if new_date.month == 12 && old_date.month == 12 && new_date.year != old_date.year ###january
@@ -468,7 +468,7 @@ end
     untreat += url + "\n" if status == 1 || status == 0 || status == 2
   end
 
-	break if end_flag == true #次のページをパースしない
+  break if end_flag == true #次のページをパースしない
 end
 
 
@@ -483,9 +483,9 @@ File.open("./data/untreat_#{account}.txt","w"){ |f| f.write untreat }
 CSV.open("./data/prepare_#{account}.csv","w"){|csv|  prepare.each{|d| csv << d} }
 ####本データ書き出し
 read_data.each_with_index do |d,index|
-	change.each do |cdata|
-	  read_data[index] = cdata if cdata[4] == d[4]
-	end
+  change.each do |cdata|
+    read_data[index] = cdata if cdata[4] == d[4]
+  end
 end
 ###削除済みデータを削除
 read_data.delete_if{|d| delete_data.include?(d[2]) }

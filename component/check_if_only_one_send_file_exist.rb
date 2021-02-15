@@ -1,5 +1,5 @@
 #encoding:windows-31j
-#
+
 require_relative "account_info"
 
 def check_if_only_one_send_file_exist
