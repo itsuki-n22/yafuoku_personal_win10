@@ -22,11 +22,11 @@ accounts.each do |account|
     price_path = '//*[@id="list01"]/table/tbody/tr/td[3]'
     driver.find_elements(:xpath => watch_path).each_with_index do |d,i|
       data[i + count * 100] = []
-      data[i + count * 100] << d.text.encode('cp932')
-      data[i + count * 100] << d.attribute('href').split("/").last
+			data[i + count * 100] << d.text.encode('cp932') rescue nil
+			data[i + count * 100] << d.attribute('href').split("/").last rescue nil
     end
     driver.find_elements(:xpath => price_path).each_with_index do |d,i|
-      data[i + count * 100] << d.text.encode('cp932').gsub(',',"").split('‰~').first 
+			data[i + count * 100] << d.text.encode('cp932').gsub(',',"").split('‰~').first  rescue nil
     end
     count += 1
     sleep 3
@@ -48,19 +48,30 @@ accounts.each do |account|
   data.each_with_index do |d,i|
     name = d[0]
     auc_id = d[1]
-    other_id ||= auction_ids[name] || other_id ||= auction_ids[auc_id]
+    other_id ||= auction_ids[name] 
+		other_id ||= auction_ids[auc_id] 
     unless other_id
       company_id = take_product(driver, company_ids, auc_id)
-      other_ids << [company_id, auc_id, name, company_id]
     else
       company_id = other_id
     end
+		other_ids << [company_id, auc_id, name]
     stock_num = account_info[:stock_num][company_id]
     data[i] << company_id
     data[i] << stock_num
   end
+	auction_ids = auction_ids_csv(account: account)
+	auction_ids.delete_if do |d|
+		company_id = d.first
+		flag = false
+		other_ids.each{ |x| flag = true if x[0] == company_id }
+		flag
+	end
+	other_ids
+	auction_ids
+	other_ids += auction_ids
 
-  CSV.open("./data/auction_id_#{account}.csv","w"){ |f| data.each{|d| f << d} }
+	CSV.open("./data/auction_ids_#{account}.csv","w"){ |f| other_ids.to_a.each{|d| f << d} }
 end
 
 
