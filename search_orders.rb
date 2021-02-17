@@ -6,7 +6,6 @@ account = account_info[:account]
 password = account_info[:password]
 car_pids = product_ids[:company_ids]
 puts "パスワード画面が開いたらログインして、ログイン後にこの黒い画面にenterを入力してね"
-#############
 
 #### ファイル読み込み、最新日時の取り出し
 target_file = Dir.pwd + '\\sale\\' + account + '_sale.csv'
@@ -25,11 +24,9 @@ change = []
 data =[]
 delete_data=[]
 comment_data = []
-new_order = []
 
 untreat = File.open("./data/untreat_#{account}.txt","r").read
 end_flag = false
-exception = ""
 
 driver = Selenium::WebDriver.for :chrome # , http_client: client
 client = Selenium::WebDriver::Remote::Http::Default.new
@@ -56,26 +53,20 @@ x_price = '//*[@id="acConHeader"]/div[2]/dl/dd[2]'
 x_close = '//*[@id="acConHeader"]/div[2]/dl/dd[3]'
 x_aucid = '//*[@id="acConHeader"]/div[2]/dl/dd[4]/p'
 x_userid = '//*[@id="acConHeader"]/div[2]/dl/dd[5]/p'
-
 x_click = '//*[@id="yjMain"]/div/div/div[2]/p/a'
-
-x_name = '//*[@id="yjMain"]/div/div/div[3]/div[1]/table/tbody/tr/td/div/table/tbody/tr[1]/td/div'
-x_postnum='//*[@id="yjMain"]/div/div/div[3]/div[1]/table/tbody/tr/td/div/table/tbody/tr[2]/td/div'
-x_address = '//*[@id="yjMain"]/div/div/div[3]/div[1]/table/tbody/tr/td/div/table/tbody/tr[2]/td/div'
-x_tel = '//*[@id="yjMain"]/div/div/div[3]/div[1]/table/tbody/tr/td/div/table/tbody/tr[3]/td/div'
-x_send_price = '//*[@id="yjMain"]/div/div/div[3]/div[1]/table/tbody/tr/td/div/table/tbody/tr[4]/td/div'
-x_status = '//*[@id="yjMain"]/div/div/div[3]/div[5]/table/tbody/tr/td/div/table/tbody/tr/td/div'
-x_status = '//*[@id="yjMain"]/div/div/div[3]/div[6]/table/tbody/tr/td/div/table/tbody/tr/td/div'
-x_payday1 = '//*[@id="yjMain"]/div/div/div[3]/div[5]/table/tbody/tr/td/div/table/tbody/tr['
-x_payday2 = ']/td/div/span'
+x_address = x_postnum = '((//*[@class="decInTblCel"])[1]//div[@class="decCnfWr"])[2]'
+x_name = '((//*[@class="decInTblCel"])[1]//div[@class="decCnfWr"])[1]'
+x_tel = '((//*[@class="decInTblCel"])[1]//div[@class="decCnfWr"])[3]'
+x_send_price = '((//*[@class="decInTblCel"])[1]//div[@class="decCnfWr"])[4]'
+x_status = '//*[@class="libTableCnfTop"][5]//*[@class="decCnfWr"]'
 x_payway = '//*[@id="yjMain"]/div/div/div[3]/div[2]/table/tbody/tr/td/div/table/tbody/tr/td/div'
 ###########################################untreat.txtから
 untreat_urls = untreat.split("\n")
-p untreat_urls.size.to_s + "個チェックします"
+puts untreat_urls.size.to_s + "個の未完了の取引をチェックします"
 untreat = ""
 
 untreat_urls.each do |url|
-  driver.navigate.to url.split('&').first
+  driver.navigate.to url
   puts url
   
   status = 0
@@ -113,6 +104,7 @@ untreat_urls.each do |url|
       delete_data << url
       next
     end
+  rescue
   end
 
   begin 
@@ -166,7 +158,7 @@ untreat_urls.each do |url|
   rescue
   end
 
-  begin
+  begin ## diff
     driver.find_element(:xpath => x_name).text  ##まとめパート
   rescue
     puts "matome:音信不通 or 連絡待ち"
@@ -273,7 +265,7 @@ end
     urls <<  url.attribute('href')
   end
   urls.each do |url|
-    next if untreat_urls.include?(url)
+    next if untreat_urls.include?(url) ##diff
     driver.navigate.to url
     p url
     
@@ -330,7 +322,6 @@ end
     end
     aucid = driver.find_element(:xpath, x_aucid).text.encode('cp932', undef: :replace).split('ID： ')[1]
 
-    new_order << [aucid,"bbs"] #### 新しい注文
 
     data << [status,product,url,close,aucid,userid,price,qunt,send_price,amount,payday,payway,sentday,name,postnum,address,tel]
         next
@@ -356,7 +347,6 @@ end
        close = time_parse(str: tmp).to_s
     end
     aucid = driver.find_element(:xpath, x_aucid).text.encode('cp932', undef: :replace).split('ID： ')[1]
-    new_order << [aucid,"bbs"] #### 新しい注文
 
     ###########################################下部
     begin  ##まとめて取引の付属商品である場合
@@ -476,7 +466,6 @@ end
 puts prepare.size.to_s + "個の発送"
 puts untreat.split("\n").size.to_s + "個の未解決"
 puts change.size.to_s + "個のステータス変化"
-puts exception.size.to_s + "個の例外"
 puts "削除：" + delete_data.size.to_s
 ####準備ファイル書き出し
 File.open("./data/untreat_#{account}.txt","w"){ |f| f.write untreat }
@@ -493,7 +482,6 @@ read_data.delete_if{|d| delete_data.include?(d[2]) }
 ###データ書き出し
 data = data + read_data
 CSV.open(target_file,"w"){|f| data.each{|d| f << d}}
-CSV.open("./data/new_order_#{account}.csv" ,"w"){|f| new_order.each{|d| f << d}}
 CSV.open("./data/comment_#{account}.csv","w"){|f| comment_data.each{|d| f << d}}
 p 'complete! made ' + target_file
 driver.quit
