@@ -4,7 +4,7 @@ require_relative 'component/components'
 init ##フォルダがない場合そのアカウント用のフォルダを作成
 account = account_info[:account]
 password = account_info[:password]
-car_pids = product_ids[:company_ids]
+company_ids = product_ids[:company_ids]
 puts "パスワード画面が開いたらログインして、ログイン後にこの黒い画面にenterを入力してね"
 
 #### ファイル読み込み、最新日時の取り出し
@@ -33,13 +33,13 @@ client = Selenium::WebDriver::Remote::Http::Default.new
 client.read_timeout = 120
 login_yahoo(account: account, password: password, driver: driver)
 
-def take_product(driver, car_pids, auc_id)
+def take_product(driver, company_ids, auc_id)
   url = 'https://page.auctions.yahoo.co.jp/jp/auction/' + auc_id
   driver.navigate.to url
   id = nil
   driver.find_element(:xpath, '//*[@class="ProductExplanation__commentBody"]').text.encode("cp932").split("\c\n").each do |d|
     d = d.strip
-    id = car_pids[ d ] if car_pids[ d ] 
+    id = company_ids[ d ] if company_ids[ d ] 
   end
   id 
 end
@@ -225,7 +225,7 @@ untreat_urls.each do |url|
     paied = "キャンセル" if driver.find_element(:xpath ,x_cancel).text.encode('cp932') =~ /キャンセル/
   end
   ###########################################
-  puts product = take_product(driver, car_pids, aucid) if take_product(driver, car_pids, aucid)
+  puts product = take_product(driver, company_ids, aucid) if take_product(driver, company_ids, aucid)
  
   prepare << [status,product,url,close,aucid,userid,price,qunt,send_price,amount,payday,payway,paied,name,postnum,address,tel] if status == 2
 
@@ -453,7 +453,7 @@ end
     ###########################################
     data << [status,product,url,close,aucid,userid,price,qunt,send_price,amount,payday,payway,sentday,name,postnum,address,tel]
     
-    product = take_product(driver, car_pids, aucid) if take_product(driver, car_pids, aucid)
+    product = take_product(driver, company_ids, aucid) if take_product(driver, company_ids, aucid)
     prepare << [status,product,url,close,aucid,userid,price,qunt,send_price,amount,payday,payway,paied,name,postnum,address,tel] if status == 2
     untreat += url + "\n" if status == 1 || status == 0 || status == 2
   end

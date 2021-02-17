@@ -1,5 +1,6 @@
 #encoding: windows-31j
 require "csv"
+require_relative "account_info"
 def product_ids
   hash = {}
   company_ids = {}

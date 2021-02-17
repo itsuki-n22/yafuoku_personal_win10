@@ -2,6 +2,7 @@
 require "csv"
 def account_info
   hash = {}
+  hash[:stock_num] = {}
   File.open(__dir__ + "/../setting/info.txt").read.each_line do |line|
     case line
     when /desktop_dir:/
@@ -60,7 +61,6 @@ def account_info
      hash[:stock_id_column] != "" &&
      !hash[:stock_num_column].nil? &&
      hash[:stock_num_column] != "" 
-    hash[:stock_num] = {}
     stock_num_columns = hash[:stock_num_column].split(",")
     CSV.foreach(hash[:stock_file]) do |f|
       stock_num = 0
