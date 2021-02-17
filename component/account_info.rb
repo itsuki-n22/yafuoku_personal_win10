@@ -6,6 +6,12 @@ def account_info
     case line
     when /desktop_dir:/
       hash[:desktop_dir] = line.split("desktop_dir:").last.strip
+    when /stock_file:/
+      hash[:stock_file] = line.split("stock_file:").last.strip
+    when /stock_id_column:/
+      hash[:stock_id_column] = line.split("stock_id_column:").last.strip
+    when /stock_num_column:/
+      hash[:stock_num_column] = line.split("stock_num_column:").last.strip
     when /sagawa_track_url:/
       hash[:sagawa_track_url] = line.split("sagawa_track_url:").last.strip
     when /postjp_track_url:/
@@ -38,10 +44,33 @@ def account_info
       case line
       when /desktop_dir:/
         hash[:desktop_dir] = line.split("desktop_dir:").last.strip
+      when /stock_file:/
+        hash[:stock_file] = line.split("stock_file:").last.strip
+      when /stock_id_column:/
+        hash[:stock_id_column] = line.split("stock_id_column:").last.strip
+      when /stock_num_column:/
+        hash[:stock_num_column] = line.split("stock_num_column:").last.strip
       end
     end
   end
   ###
+  if !hash[:stock_file].nil? &&
+     hash[:stock_file] != "" &&
+     !hash[:stock_id_column].nil? &&
+     hash[:stock_id_column] != "" &&
+     !hash[:stock_num_column].nil? &&
+     hash[:stock_num_column] != "" 
+    hash[:stock_num] = {}
+    stock_num_columns = hash[:stock_num_column].split(",")
+    CSV.foreach(hash[:stock_file]) do |f|
+      stock_num = 0
+      stock_num_columns.each do |column|
+        stock_num += f[ column.to_i ].to_i if f[ column.to_i ]
+      end
+      hash[:stock_num][ f[ hash[:stock_id_column].to_i ] ] = stock_num
+    end
+  end
+
   hash
 end
 
