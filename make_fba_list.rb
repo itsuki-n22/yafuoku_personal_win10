@@ -3,38 +3,39 @@ require_relative 'component/components'
 
 account = account_info[:account]
 desktop_dir = account_info[:desktop_dir]
+fba_data = account_info[:fba_data]
 today = Date.today.to_s
 desktop = desktop_dir + "\\"
 
-fba_data = []
+send_data = {}
 result = []
 data = []
-CSV.foreach(desktop + "send_yafuoku_" + today + ".csv"){|f| fba_data << f if f[7] =~ /fba/i}
 
+CSV.foreach(desktop + "send_yafuoku_" + today + ".csv") do |d|
+  if d[7] =~ /fba/i
+    send_data[d[1]] = { id: d[1], product: d[0], account: d[3], asin: d[6]}
+  end
+end
 CSV.foreach("./data/prepare_#{account}.csv"){|x| data << x }
 
-fba_data.each_with_index do |d,index|
-  next if d == nil || account != d[3]
-  id = d[1]
-  array = []
+data.each_with_index do |d,index|
+  next if d == nil
+  id = d[4]
+  next unless id
+  product_id = send_data[id][:product] 
+  asin = fba_data[product_id][:asin]
+  asin ||= send_data[id][:asin] 
+  fba_stock = fba_data[product_id][:fba_stock]
+  fba_stock ||= 0
 
-  data.each_with_index do |original, i|
-    if id == original[4]
-      data.delete_at(i)
-      array = original
-      break
-    end
+  data[index][16] = "0" + data[index][16].to_s if data[index][16] !~ /^0/ #電話番号がexcelの自動で先頭の0を消す機能によって消えた場合に0を追加する
+
+  if fba_stock > 1 && asin
+    data[index][17] = asin 
+  else
+    data.delete_at(index)
   end
   
-  array[1] = d[0]
-  array[1] = array[1][0,8].gsub(" ","") if array[1] !~ /^[a-zA-Z]/ #長い文字列は取り込み不可のため
-  array[16] = "0" + array[16].to_s if array[16] !~ /^0/ #電話番号がexcelの自動で先頭の0を消す機能によって消えた場合に0を追加する
-  array[19] = account_info[:address]
-  array[20] = account_info[:name]
-  array[21] = account_info[:phone]
-
-  result << array
 end
-  
-CSV.open(desktop + "prepare_a2" + today + ".csv","w"){|f| result.each{|d| f << d}}
+CSV.open(desktop + "prepare_a2" + today + ".csv","w"){|f| data.each{|d| f << d}}
 p "complete"

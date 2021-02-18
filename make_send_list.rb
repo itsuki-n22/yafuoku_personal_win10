@@ -4,6 +4,7 @@ require 'date'
 require_relative 'component/account_info'
 account = account_info[:account]
 desktop = account_info[:desktop_dir] + "\\"
+fba_data = account_info[:fba_data]
 
 comment_data = []
 send_data = []
@@ -16,8 +17,17 @@ send_data.each_with_index do |d,index|
   next if d == nil
   place = account 
   p_id = d[1]
-  asin = ""
+  asin = nil
+  amazon_stock = 0
+
+  if fba_data && fba_data[p_id]
+    asin = fba_data[p_id][:asin] 
+    amazon_stock = fba_data[p_id][:amazon_stock]
+    amazon_stock ||= 0
+  end
+
   memo = ""
+  memo = "fba" if asin && amazon_stock > 0
   qunt = d[7].to_i
   p_id = p_id + "xx" + qunt.to_s if qunt > 1
   id = d[4]
