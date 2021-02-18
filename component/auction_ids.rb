@@ -21,7 +21,5 @@ def auction_ids_csv(account: nil)
 end
 
 if __FILE__ == $0
- p auction_ids(account: ARGV[0])
- p auction_ids_csv(account: ARGV[0])
- p auction_ids(account: ARGV[0]).to_a
+  p auction_ids(account: ARGV[0])
 end

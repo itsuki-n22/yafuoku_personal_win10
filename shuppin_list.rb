@@ -12,6 +12,7 @@ data =[]
 other_ids =[]
 accounts.each do |account|
   auction_ids = auction_ids(account: account)
+  current_auc_ids = []
   url = 'https://auctions.yahoo.co.jp/seller/' + account + '?n=100&mode=2'
   driver.navigate.to url
   count = 0
@@ -45,38 +46,30 @@ accounts.each do |account|
     end
   end
 
+  puts "èoïiêîÅF #{data.size}"
   data.each_with_index do |d,i|
+    print "#{i} "
     name = d[0]
     auc_id = d[1]
-    other_id ||= auction_ids[name] 
+    current_auc_ids << auc_id
 		other_id ||= auction_ids[auc_id] 
-    unless other_id
+    if other_id.nil? || auction_ids[auc_id].nil?
       company_id = take_product(driver, company_ids, auc_id)
     else
       company_id = other_id
     end
 		other_ids << [company_id, auc_id, name]
     stock_num = account_info[:stock_num][company_id]
-    data[i] << company_id
-    data[i] << stock_num
+    data[i] << company_id ||= ""
+    data[i] << stock_num ||= 0
   end
-	auction_ids = auction_ids_csv(account: account)
-	auction_ids.delete_if do |d|
-		company_id = d.first
-		flag = false
-		other_ids.each{ |x| flag = true if x[0] == company_id }
-		flag
-	end
-	other_ids
-	auction_ids
-	other_ids += auction_ids
 
 	CSV.open("./data/auction_ids_#{account}.csv","w"){ |f| other_ids.to_a.each{|d| f << d} }
 end
 
 
 CSV.open(account_info[:desktop_dir] + "\\yafuoku_shuppin_ichiran.csv","w") do |f|
-  data.each{|d| f << d}
+  data.sort_by{|d| d[4] }.each{|d| f << d}
 end
 
 puts "yafuoku_shuppin_ichiran.csv was made"
