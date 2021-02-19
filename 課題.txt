@@ -1,8 +1,0 @@
-複数アカウント対応
-search_orders.rbのコードの最適化
-ASIN(FBA)発送などの対応
-タイトル内のフレーズ一致によるID化
-
-
-
-component/take_product.rb が search_orders.rb で起動するか確認

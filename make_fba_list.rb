@@ -19,23 +19,24 @@ end
 CSV.foreach("./data/prepare_#{account}.csv"){|x| data << x }
 
 data.each_with_index do |d,index|
-  next if d == nil
+  next if d == nil 
   id = d[4]
-  next unless id
+  if id == nil || send_data[id] == nil
+    data.delete_at(index)
+		next
+	end
   product_id = send_data[id][:product] 
   asin = fba_data[product_id][:asin]
   asin ||= send_data[id][:asin] 
-  fba_stock = fba_data[product_id][:fba_stock]
+	fba_stock = fba_data[product_id][:amazon_stock].to_i rescue nil
   fba_stock ||= 0
 
   data[index][16] = "0" + data[index][16].to_s if data[index][16] !~ /^0/ #電話番号がexcelの自動で先頭の0を消す機能によって消えた場合に0を追加する
-
   if fba_stock > 1 && asin
     data[index][17] = asin 
   else
     data.delete_at(index)
   end
-  
 end
-CSV.open(desktop + "prepare_a2" + today + ".csv","w"){|f| data.each{|d| f << d}}
+CSV.open(desktop + "prepare_a2_" + today + ".csv","w"){|f| data.each{|d| f << d}}
 p "complete"

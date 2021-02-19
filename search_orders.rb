@@ -98,12 +98,14 @@ untreat_urls.each do |url|
   rescue
   end
 
+	begin
   driver.find_elements(:xpath,'//*[@id="yjMain"]/div/div/p').each do |element|
     if element.text.encode('cp932') =~ /íœÏ‚İ/
       puts "íœÏ‚İ"
       delete_data << url
       next
     end
+	end
   rescue
   end
 

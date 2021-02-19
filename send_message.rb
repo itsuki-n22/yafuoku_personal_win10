@@ -8,7 +8,7 @@ desktop = account_info[:desktop_dir]
 
 list = read_send_file
 #############
-access = false
+access = true
 debug = true
 
 
@@ -87,3 +87,4 @@ end_flag = false
   driver.quit
 end
 p "send_message complete"
+require_relative "move_send_files"

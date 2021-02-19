@@ -6,6 +6,6 @@ require "csv"
 
 def read_send_file
   array = []
-  CSV.foreach(account_info[:desktop_dir].gsub("\\","/") + "/send_#{Date.today}.csv"){|f| array << f }
+  CSV.foreach(account_info[:desktop_dir].gsub("\\","/") + "/send_yafuoku_#{Date.today}.csv"){|f| array << f }
   array
 end

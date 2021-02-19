@@ -22,11 +22,11 @@ send_data.each_with_index do |d,index|
 
   if fba_data && fba_data[p_id]
     asin = fba_data[p_id][:asin] 
-    amazon_stock = fba_data[p_id][:amazon_stock]
+		amazon_stock = fba_data[p_id][:amazon_stock].to_i
     amazon_stock ||= 0
   end
 
-  memo = ""
+  memo = "" #debug
   memo = "fba" if asin && amazon_stock > 0
   qunt = d[7].to_i
   p_id = p_id + "xx" + qunt.to_s if qunt > 1
